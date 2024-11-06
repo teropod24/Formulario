@@ -65,8 +65,8 @@ class _HomePage extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) {
                     return const CodePage(
-                      title: 'Salesians Sarrià 24/25',
-                      child: FormA(),
+                        title: 'Salesians Sarrià 24/25', 
+                        child: FormA()
                     );
                   },
                 ),

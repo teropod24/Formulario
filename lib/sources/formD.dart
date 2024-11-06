@@ -26,164 +26,165 @@ class _RelatedFieldsState extends State<FormD> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          const SizedBox(height: 20),
-          FormBuilderTextField(
-            name: 'country',
-            controller: _countryController,
-            decoration: const InputDecoration(
-              labelText: 'Countries',
-              hintText: 'Start typing to search for a country...',
+    return Scaffold(
+      body: FormBuilder(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            const SizedBox(height: 20),
+            FormBuilderTextField(
+              name: 'country',
+              controller: _countryController,
+              decoration: const InputDecoration(
+                labelText: 'Countries',
+                hintText: 'Start typing to search for a country...',
+              ),
+              onChanged: (query) {
+                setState(() {
+                  if (query != null && query.isNotEmpty) {
+                    filteredCountries = _allCountries
+                        .where((country) =>
+                            country.toLowerCase().contains(query.toLowerCase()))
+                        .toList();
+                  } else {
+                    filteredCountries = [];
+                  }
+                });
+              },
             ),
-            onChanged: (query) {
-              setState(() {
-                if (query != null && query.isNotEmpty) {
-                  filteredCountries = _allCountries
-                      .where((country) =>
-                          country.toLowerCase().contains(query.toLowerCase()))
-                      .toList();
-                } else {
-                  filteredCountries = [];
-                }
-              });
-            },
-          ),
-          if (filteredCountries.isNotEmpty)
-            Column(
-              children: filteredCountries.map((country) {
-                return ListTile(
-                  title: Text(country),
-                  onTap: () {
-                    setState(() {
-                      _countryController.text = country;
-                      filteredCountries = [];
-                    });
+            if (filteredCountries.isNotEmpty)
+              Column(
+                children: filteredCountries.map((country) {
+                  return ListTile(
+                    title: Text(country),
+                    onTap: () {
+                      setState(() {
+                        _countryController.text = country;
+                        filteredCountries = [];
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+            FormBuilderDateTimePicker(
+              name: 'date',
+              inputType: InputType.date,
+              initialEntryMode: DatePickerEntryMode.calendar,
+              decoration: InputDecoration(
+                labelText: 'Select Date',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    _formKey.currentState!.fields['date']?.didChange(null);
                   },
-                );
-              }).toList(),
-            ),
-          FormBuilderDateTimePicker(
-            name: 'date',
-            inputType: InputType.date,
-            initialEntryMode: DatePickerEntryMode.calendar,
-            decoration: InputDecoration(
-              labelText: 'Select Date',
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  _formKey.currentState!.fields['date']?.didChange(null);
-                },
+                ),
               ),
             ),
-          ),
-          FormBuilderDateRangePicker(
-            name: 'date_range',
-            firstDate: DateTime(2000),
-            lastDate: DateTime(2030),
-            format: DateFormat('yyyy-MM-dd'),
-            decoration: InputDecoration(
-              labelText: 'Date Range',
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  _formKey.currentState!.fields['date_range']?.didChange(null);
-                },
+            FormBuilderDateRangePicker(
+              name: 'date_range',
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2030),
+              format: DateFormat('yyyy-MM-dd'),
+              decoration: InputDecoration(
+                labelText: 'Date Range',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    _formKey.currentState!.fields['date_range']
+                        ?.didChange(null);
+                  },
+                ),
               ),
             ),
-          ),
-          FormBuilderDateTimePicker(
-            name: 'timer',
-            inputType: InputType.time,
-            initialTime: TimeOfDay(hour: 8, minute: 0),
-            decoration: InputDecoration(
-              labelText: 'Select Time',
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  _formKey.currentState!.fields['timer']?.didChange(null);
-                },
+            FormBuilderDateTimePicker(
+              name: 'timer',
+              inputType: InputType.time,
+              initialTime: TimeOfDay(hour: 8, minute: 0),
+              decoration: InputDecoration(
+                labelText: 'Select Time',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    _formKey.currentState!.fields['timer']?.didChange(null);
+                  },
+                ),
               ),
             ),
-          ),
-          FormBuilderFilterChip<String>(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            decoration:
-                const InputDecoration(labelText: 'The language of my people'),
-            name: 'languages_filter',
-            selectedColor: Colors.red,
-            options: const [
-              FormBuilderChipOption(
-                value: 'HTML',
-                avatar: CircleAvatar(child: Text('D')),
-              ),
-              FormBuilderChipOption(
-                value: 'CSS',
-                avatar: CircleAvatar(child: Text('K')),
-              ),
-              FormBuilderChipOption(
-                value: 'Java',
-                avatar: CircleAvatar(child: Text('J')),
-              ),
-              FormBuilderChipOption(
-                value: 'Dart',
-                avatar: CircleAvatar(child: Text('S')),
-              ),
-              FormBuilderChipOption(
-                value: 'TypeScript',
-                avatar: CircleAvatar(child: Text('O')),
-              ),
-              FormBuilderChipOption(
-                value: 'Angular',
-                avatar: CircleAvatar(child: Text('A')),
-              ),
-            ],
-            onChanged: _onChanged,
-            validator: FormBuilderValidators.compose([
-              FormBuilderValidators.minLength(1),
-              FormBuilderValidators.maxLength(3),
-            ]),
-          ),
-          const SizedBox(height: 10),
-          MaterialButton(
-            color: Theme.of(context).colorScheme.secondary,
-            child: const Text("Submit", style: TextStyle(color: Colors.white)),
-            onPressed: () {
-              if (_formKey.currentState!.saveAndValidate()) {
-                final formValues = _formKey.currentState!.value;
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Resumen de la Solicitud'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                            'País: ${formValues['country'] ?? 'No seleccionado'}'),
-                        Text(
-                            'Día: ${formValues['date'] != null ? DateFormat('yyyy-MM-dd').format(formValues['date']) : 'No seleccionado'}'),
-                        Text(
-                            'Rango de Fechas: ${formValues['date_range'] != null ? '${DateFormat('yyyy-MM-dd').format(formValues['date_range'].start)} a ${DateFormat('yyyy-MM-dd').format(formValues['date_range'].end)}' : 'No seleccionado'}'),
-                        Text(
-                            'Hora: ${formValues['timer'] != null ? DateFormat.jm().format(formValues['timer']) : 'No seleccionado'}'),
-                        Text(
-                            'Lenguajes: ${formValues['languages_filter']?.join(', ') ?? 'No seleccionado'}'),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        child: const Text('OK'),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
+            FormBuilderFilterChip<String>(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration:
+                  const InputDecoration(labelText: 'The language of my people'),
+              name: 'languages_filter',
+              selectedColor: Colors.red,
+              options: const [
+                FormBuilderChipOption(
+                  value: 'HTML',
+                  avatar: CircleAvatar(child: Text('D')),
+                ),
+                FormBuilderChipOption(
+                  value: 'CSS',
+                  avatar: CircleAvatar(child: Text('K')),
+                ),
+                FormBuilderChipOption(
+                  value: 'Java',
+                  avatar: CircleAvatar(child: Text('J')),
+                ),
+                FormBuilderChipOption(
+                  value: 'Dart',
+                  avatar: CircleAvatar(child: Text('S')),
+                ),
+                FormBuilderChipOption(
+                  value: 'TypeScript',
+                  avatar: CircleAvatar(child: Text('O')),
+                ),
+                FormBuilderChipOption(
+                  value: 'Angular',
+                  avatar: CircleAvatar(child: Text('A')),
+                ),
+              ],
+              onChanged: _onChanged,
+              validator: FormBuilderValidators.compose([
+                FormBuilderValidators.minLength(1),
+                FormBuilderValidators.maxLength(3),
+              ]),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (_formKey.currentState!.saveAndValidate()) {
+            final formValues = _formKey.currentState!.value;
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Resumen de la Solicitud'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('País: ${formValues['country'] ?? 'No seleccionado'}'),
+                    Text(
+                        'Día: ${formValues['date'] != null ? DateFormat('yyyy-MM-dd').format(formValues['date']) : 'No seleccionado'}'),
+                    Text(
+                        'Rango de Fechas: ${formValues['date_range'] != null ? '${DateFormat('yyyy-MM-dd').format(formValues['date_range'].start)} a ${DateFormat('yyyy-MM-dd').format(formValues['date_range'].end)}' : 'No seleccionado'}'),
+                    Text(
+                        'Hora: ${formValues['timer'] != null ? DateFormat.jm().format(formValues['timer']) : 'No seleccionado'}'),
+                    Text(
+                        'Lenguajes: ${formValues['languages_filter']?.join(', ') ?? 'No seleccionado'}'),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                );
-              }
-            },
-          ),
-        ],
+                ],
+              ),
+            );
+          }
+          debugPrint('Floating Action Button Pressed');
+        },
+        child: const Icon(Icons.upload),
       ),
     );
   }

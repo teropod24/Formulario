@@ -39,7 +39,7 @@ class ProgressIndicatorWidget extends StatelessWidget {
                   child: Text('${index + 1}', style: const TextStyle(color: Colors.white)),
                 ),
                 const SizedBox(height: 8),
-                Text('Paso ${index + 1}'),
+                Text('Paso ${index + 1}')
               ],
             );
           }),
